@@ -2,14 +2,16 @@
 
 namespace Royalcms\Component\NativeSession;
 
+use Illuminate\Support\Arr;
 use Royalcms\Component\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\MetadataBag;
 use Royalcms\Component\Session\StoreInterface;
 use Royalcms\Component\Support\Str;
+use Illuminate\Contracts\Session\Session;
 
-class Store implements SessionInterface, StoreInterface
+class Store implements SessionInterface, StoreInterface, Session
 {
     use CompatibleTrait;
     
@@ -214,7 +216,7 @@ class Store implements SessionInterface, StoreInterface
      * @param  \Symfony\Component\HttpFoundation\Request $request
      * @return void
      */
-    public function setRequestOnHandler(Request $request)
+    public function setRequestOnHandler($request)
     {
         $this->session->setRequestOnHandler($request);
     }
@@ -418,6 +420,17 @@ class Store implements SessionInterface, StoreInterface
     }
 
     /**
+     * Remove one or many items from the session.
+     *
+     * @param  string|array  $keys
+     * @return void
+     */
+    public function forget($keys)
+    {
+        Arr::forget($this->session->all(), $keys);
+    }
+
+    /**
      * Flash a key / value pair to the session.
      *
      * @param  string  $key
@@ -538,6 +551,16 @@ class Store implements SessionInterface, StoreInterface
     public function regenerateToken()
     {
         $this->put('_token', Str::random(40));
+    }
+
+    /**
+     * Get the previous URL from the session.
+     *
+     * @return string|null
+     */
+    public function previousUrl()
+    {
+        return $this->get('_previous.url');
     }
 
     /**
