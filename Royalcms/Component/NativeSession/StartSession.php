@@ -7,9 +7,10 @@ use SessionHandlerInterface;
 use Royalcms\Component\DateTime\Carbon;
 use Symfony\Component\HttpFoundation\Request;
 use RC_Hook;
-use Royalcms\Component\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class StartSession {
+class StartSession
+{
     
     /**
      * The session manager.
@@ -44,8 +45,7 @@ class StartSession {
         // If a session driver has been configured, we will need to start the session here
         // so that the data is ready for an application. Note that the Laravel sessions
         // do not make use of PHP "native" sessions in any way since they are crappy.
-        if ($this->sessionConfigured())
-        {
+        if ($this->sessionConfigured()) {
             $this->session = $session = $this->startSession($request);
         
             $request->setSession($session);
@@ -58,8 +58,7 @@ class StartSession {
         // Again, if the session has been configured we will need to close out the session
         // so that the attributes may be persisted to some storage medium. We will also
         // add the session identifier cookie to the application response headers now.
-        if ($this->sessionConfigured())
-        {
+        if ($this->sessionConfigured()) {
             $this->closeSession($this->session);
         }
     }
@@ -97,7 +96,7 @@ class StartSession {
     /**
      * Close the session handling for the request.
      *
-     * @param  \Royalcms\Component\Session\SessionInterface  $session
+     * @param  \Symfony\Component\HttpFoundation\Session\SessionInterface  $session
      * @return void
      */
     protected function closeSession(SessionInterface $session)
@@ -160,8 +159,7 @@ class StartSession {
     {
         $s = $session;
     
-        if ($this->sessionIsPersistent($c = $this->manager->getSessionConfig()))
-        {
+        if ($this->sessionIsPersistent($c = $this->manager->getSessionConfig())) {
             $secure = array_get($c, 'secure', false);
             $httponly = array_get($c, 'httponly', false);
             
@@ -230,26 +228,22 @@ class StartSession {
     /**
      * Get the session implementation from the manager.
      *
-     * @return \Royalcms\Component\Session\SessionInterface
+     * @return \Symfony\Component\HttpFoundation\Session\SessionInterface
      */
     public function getSession(Request $request)
     {
         $session = $this->manager->driver(); 
         
-        if (RC_Hook::has_filter('royalcms_session_id') && RC_Hook::apply_filters('royalcms_session_id', null))
-        {
+        if (RC_Hook::has_filter('royalcms_session_id') && RC_Hook::apply_filters('royalcms_session_id', null)) {
             $sessionId = RC_Hook::apply_filters('royalcms_session_id', null);
         }
-        elseif ($request->exists($session->getName())) 
-        {
+        elseif ($request->exists($session->getName())) {
             $sessionId = $request->input($session->getName());
         }
-        elseif ($request->cookies->has($session->getName())) 
-        {
+        elseif ($request->cookies->has($session->getName())) {
             $sessionId = $request->cookies->get($session->getName());
         }
-        else 
-        {
+        else {
             $sessionId = null;
         }
 
