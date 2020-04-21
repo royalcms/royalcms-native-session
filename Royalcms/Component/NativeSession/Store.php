@@ -41,7 +41,13 @@ class Store extends \Royalcms\Component\Session\Store implements SessionInterfac
     protected function mergeNativeSession()
     {
         foreach ($_SESSION as $name => $value) {
-            $this->put($name, $value);
+            if (! is_array($name)) {
+                $key = [$name => $value];
+            }
+
+            foreach ($key as $arrayKey => $arrayValue) {
+                Arr::set($this->attributes, $arrayKey, $arrayValue);
+            }
         }
     }
 
@@ -115,12 +121,14 @@ class Store extends \Royalcms\Component\Session\Store implements SessionInterfac
      */
     public function put($key, $value = null)
     {
+        parent::put($key, $value);
+
         if (! is_array($key)) {
             $key = [$key => $value];
         }
 
         foreach ($key as $arrayKey => $arrayValue) {
-            $this->set($arrayKey, $arrayValue);
+            Arr::set($_SESSION, $arrayKey, $arrayValue);
         }
     }
 
