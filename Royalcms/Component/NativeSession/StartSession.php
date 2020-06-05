@@ -69,6 +69,9 @@ class StartSession
      */
     protected function setNativeSessionHandler(SessionHandlerInterface $handler) 
     {
+        // 强制session的存储驱动使用php的serialize函数
+        ini_set('session.serialize_handler', 'php_serialize');
+
         session_set_save_handler($handler, true);
         
         session_register_shutdown();
