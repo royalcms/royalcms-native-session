@@ -14,11 +14,33 @@ class Serialize
         	case "php_binary":
         	    return self::unserialize_phpbinary($session_data);
         	    break;
+            case "php_serialize":
+                return self::unserialize_php_serialize($session_data);
+                break;
         	default:
         	    throw new \Exception("Unsupported session.serialize_handler: " . $method . ". Supported: php, php_binary");
         }
     }
-    
+
+    /**
+     * 反序列化 php_serialize 驱动类型
+     *
+     * @param $session_data
+     * @return array
+     * @throws \Exception
+     */
+    private static function unserialize_php_serialize($session_data)
+    {
+        return self::unserialize($session_data);
+    }
+
+    /**
+     * 反序列化 php 驱动类型
+     *
+     * @param $session_data
+     * @return array
+     * @throws \Exception
+     */
     private static function unserialize_php($session_data)
     {
         $return_data = array();
@@ -37,7 +59,13 @@ class Serialize
         }
         return $return_data;
     }
-    
+
+    /**
+     * 反序列化 phpbinary 驱动类型
+     *
+     * @param $session_data
+     * @return array
+     */
     private static function unserialize_phpbinary($session_data)
     {
         $return_data = array();
