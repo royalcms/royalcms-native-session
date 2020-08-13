@@ -2,6 +2,8 @@
 
 namespace Royalcms\Component\NativeSession;
 
+use Exception;
+
 class Serialize
 {
     public static function unserialize($session_data)
@@ -18,7 +20,7 @@ class Serialize
                 return self::unserialize_php_serialize($session_data);
                 break;
         	default:
-        	    throw new \Exception("Unsupported session.serialize_handler: " . $method . ". Supported: php, php_binary");
+        	    throw new Exception("Unsupported session.serialize_handler: " . $method . ". Supported: php, php_binary");
         }
     }
 
@@ -31,7 +33,7 @@ class Serialize
      */
     private static function unserialize_php_serialize($session_data)
     {
-        return self::unserialize($session_data);
+        return unserialize($session_data);
     }
 
     /**
@@ -47,7 +49,7 @@ class Serialize
         $offset = 0;
         while ($offset < strlen($session_data)) {
             if (! strstr(substr($session_data, $offset), "|")) {
-                throw new \Exception("invalid data, remaining: " . substr($session_data, $offset));
+                throw new Exception("invalid data, remaining: " . substr($session_data, $offset));
             }
             $pos = strpos($session_data, "|", $offset);
             $num = $pos - $offset;
