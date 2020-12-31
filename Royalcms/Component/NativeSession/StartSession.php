@@ -235,10 +235,10 @@ class StartSession
      */
     public function getSession(Request $request)
     {
-        $session = $this->manager->driver(); 
-        
-        if (RC_Hook::has_filter('royalcms_session_id') && RC_Hook::apply_filters('royalcms_session_id', null)) {
-            $sessionId = RC_Hook::apply_filters('royalcms_session_id', null);
+        $session = $this->manager->driver();
+        $royalcms_session_id = RC_Hook::apply_filters('royalcms_session_id', null);
+        if (RC_Hook::has_filter('royalcms_session_id') && !empty($royalcms_session_id)) {
+            $sessionId = $royalcms_session_id;
         }
         elseif ($request->exists($session->getName())) {
             $sessionId = $request->input($session->getName());
